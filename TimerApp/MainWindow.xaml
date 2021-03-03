@@ -1,0 +1,55 @@
+﻿<Window x:Class="TimerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TimerApp"
+        mc:Ignorable="d"
+        Title="Timer"
+        SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <Grid>
+        <Grid Name="UpperPanel" Margin="30,10,30,330">
+            <TextBlock Name="ModeTxt" Margin="0,0,350,90">Mode:</TextBlock>
+            <TextBlock Margin="130,0,220,90">Main time (sec):</TextBlock>
+            <TextBlock Margin="230,0,100,90">Interval time (sec):</TextBlock>
+            <TextBlock Margin="375,70,0,20"> minutes</TextBlock>
+            <TextBlock Margin="130,40,220,50">Break time (sec):</TextBlock>
+            <TextBlock Margin="230,40,100,50">Repetitions:</TextBlock>
+            <CheckBox Margin="350,0,20,90" Name="StartAtCheckBox" IsChecked="False" Click="StartAtCheckBox_Checked">Start at:</CheckBox>
+            <CheckBox Margin="350,50,20,40" Name="StartInCheckBox" IsChecked="False" Click="StartInCheckBox_Click">Start in:</CheckBox>
+
+            <ComboBox Margin="0,20,330,60" Name="ModeCmb" Width="105" SelectionChanged="ModeCmb_SelectionChanged">
+                <ComboBoxItem>Timer</ComboBoxItem>
+                <ComboBoxItem>Interval</ComboBoxItem>
+                <ComboBoxItem>Pomodoro</ComboBoxItem>
+                <ComboBoxItem>Multiple intervals</ComboBoxItem>
+            </ComboBox>
+            <TextBox Margin="130,20,220,70" Name="MainTxtBox" TextAlignment="Right" MaxLength="4" GotFocus="MainTxtBox_GotFocus" LostFocus="MainTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="235,20,115,70" Name="InterTxtBox" TextAlignment="Right" MaxLength="4" GotFocus="InterTxtBox_GotFocus" LostFocus="InterTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="130,60,220,30" Name="BreakTxtBox" TextAlignment="Right" MaxLength="4" GotFocus="BreakTxtBox_GotFocus" LostFocus="BreakTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="235,60,165,30" Name="RepTxtBox" TextAlignment="Right" MaxLength="2" GotFocus="MainTxtBox_GotFocus" LostFocus="MainTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="345,20,50,70" Name="StartHrTxtBox" TextAlignment="Right" MaxLength="2" IsEnabled="False" LostFocus="StartHrTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="395,20,0,70" Name="StartMinTxtBox" TextAlignment="Right" MaxLength="2" IsEnabled="False" LostFocus="StartMinTxtBox_LostFocus"></TextBox>
+            <TextBox Margin="345,70,70,20" Name="StartInTxtBox" TextAlignment="Right" MaxLength="2" IsEnabled="False" LostFocus="StartMinTxtBox_LostFocus"></TextBox>
+
+            <TextBlock Margin="50,80,0,0" Name="TimeTranslation" TextAlignment="Justify">seconds translates to</TextBlock>
+        </Grid>
+        <Grid Name="MainEventsGrid" Background="White" Margin="30,120,30,60">
+            <TextBlock Margin="0,0,360,240" Name="RpsHeader" Background="LightGray">Repetitions:</TextBlock>
+            <TextBlock Margin="0,20,360,220" Name="RpsText" TextAlignment="Center" Background="LightGray">0</TextBlock>
+            <TextBlock Margin="0,50,360,190" Name="SrsHeader" Background="LightGray">Series:</TextBlock>
+            <TextBlock Margin="0,70,360,170" Name="SrsText" TextAlignment="Center" Background="LightGray">0</TextBlock>
+            <Button Name="ResetButton" Margin="0,240,360,0" Click="ResetButton_Click">Reset</Button>
+            
+            <TextBox Name="AlertTxt" Margin="70,30,70,210" TextAlignment="Center" FontSize="16">Please input correct time strings</TextBox>
+            <TextBox Name="MainTimeLeft" Margin="130,60,130,170" TextAlignment="Center" FontSize="24">00:00:00.000</TextBox>
+            <TextBox Name="UpcomingTime1" Margin="160,100,160,130" TextAlignment="Center" FontSize="20">00:00:00.000</TextBox>
+            <TextBox Name="UpcomingTime2" Margin="170,140,170,100" TextAlignment="Center" FontSize="16">00:00:00.000</TextBox>
+            <Border BorderBrush="DimGray" BorderThickness="2" />
+        </Grid>
+        <Grid Name="BottomButtons" Margin="30,400,30,15">
+            <Button Margin="0,0,350,0" Name="StartPauseBtn" Click="StartPauseBtn_Click">Start</Button>
+            <Button Margin="350,0,0,0" Name="ExitBtn" Click="ExitBtn_Click">Exit</Button>
+        </Grid>
+    </Grid>
+</Window>
