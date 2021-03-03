@@ -1,0 +1,70 @@
+﻿<Window x:Class="Kanban.OptionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kanban"
+        mc:Ignorable="d"
+        Title="OptionWindow" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    <Grid Width="400" Height="300">
+        <!--zmienić na listę opcji do wyboru i kontrolki tworzone według wybranej opcji-->
+        <Grid Name="LeftSideGrid" Margin="10,10,250,40">
+            <!--managing users, adding attributes etc.-->
+            <Grid Name="ActionGrid" Margin="0,0,0,180">
+                <TextBlock FontSize="9" Margin="0,0,0,50" HorizontalAlignment="Center">Project settings:</TextBlock>
+                <TextBlock FontSize="9" Margin="0,40,0,15">Choose action:</TextBlock>
+                <ComboBox Name="LeftSideActionBox" Margin="0,55,0,0" SelectionChanged="LeftSideActionBox_SelectionChanged" FontSize="10">
+                    <ComboBoxItem>Choose action</ComboBoxItem>
+                    <ComboBoxItem>Add user to project</ComboBoxItem>
+                    <ComboBoxItem>Manage project user</ComboBoxItem>
+                    <ComboBoxItem>Edit attribute</ComboBoxItem>
+                    <ComboBoxItem>Delete attribute</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+            <Grid Name="LeftMainGrid" Margin="0,80,0,0">
+                
+            </Grid>
+        </Grid>
+        <Grid Name="MidGrid" Margin="160,10,160,40" Visibility="Visible">
+            <!--adding global attributes, deleting projects, creating/deleting users, changing system roles of users, global resets-->
+            <Grid Name="MidActionGrid" Margin="0,0,0,180">
+                <TextBlock FontSize="9" Margin="0,0,0,0" TextWrapping="Wrap" TextAlignment="Center">Administrative options</TextBlock>
+                <TextBlock FontSize="9" Margin="0,40,0,0">Choose action:</TextBlock>
+                <ComboBox Name="MidActionBox" Margin="0,55,0,0" FontSize="9" SelectionChanged="ActionCbx_SelectionChaned">
+                    <ComboBoxItem>New action</ComboBoxItem>
+                    <ComboBoxItem>Add global attribute</ComboBoxItem>
+                    <ComboBoxItem>Add user</ComboBoxItem>
+                    <ComboBoxItem>Manage user</ComboBoxItem>
+                    <ComboBoxItem>Delete project</ComboBoxItem>
+                    <ComboBoxItem>Global reset</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+            <Grid Name="MidMainGrid" Margin="0,80,0,0">
+                <TextBlock FontSize="9" Margin="0,0,0,0">Create user:</TextBlock>
+                <TextBox Name="CrtUser_Login" Margin="0,15,0,140"></TextBox>
+                <TextBlock FontSize="9" Margin="0,40,0,115">Password:</TextBlock>
+                <TextBox Name="CrtUser_Password" Margin="0,55,0,100"></TextBox>
+                <TextBlock FontSize="9" Margin="0,75,0,80">Role:</TextBlock>
+                <ComboBox Name="RoleCmbBox" Margin="0,90,0,60"></ComboBox>
+            </Grid>
+        </Grid>
+        <Grid Name="RightSideGrid" Margin="250,10,10,40">
+            <!--changing password etc.-->
+            <Grid Name="RightSideActionGrid" Margin="0,0,0,180">
+                <TextBlock FontSize="9" Margin="0,0,0,55" HorizontalAlignment="Center">User settings:</TextBlock>
+            </Grid>
+            <Grid Name="RightMainGrid" Margin="0,80,0,0">
+                <TextBlock FontSize="9" Margin="0,0,0,155">Login:</TextBlock>
+                <TextBox Name="LoginBox" Margin="0,15,0,135" TextWrapping="Wrap" Width="140" GotFocus="LoginBox_GotFocus"></TextBox>
+                <TextBlock Name="InputHeader" FontSize="9" Margin="0,40,0,115">Password:</TextBlock>
+                <TextBox Name="PassBox" FontSize="10" TextWrapping="Wrap" Width="140" Margin="0,55,0,95" GotFocus="LoginBox_GotFocus"></TextBox>
+                <CheckBox Name="ShowPwBox" FontSize="10" Margin="0,80,0,70" Checked="ShowPwBox_Checked">Show password</CheckBox>
+            </Grid>
+        </Grid>
+        <Grid Name="BottomGrid" Margin="10,270,10,10">
+            <Button Name="ApplyButton" Click="ApplyButton_Click" Margin="0,0,290,0">Apply</Button>
+            <Button Name="ExitButton" Click="ExitButton_Click"  Margin="290,0,0,0">Exit</Button>
+            <Button Name="SysButton" Click="SysButton_Click" Margin="140,0,140,0">Admin</Button>
+        </Grid>
+    </Grid>
+</Window>
