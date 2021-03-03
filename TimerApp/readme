@@ -1,0 +1,6 @@
+# Application to count time upwards and downwards
+# Four modes: 
+#   timer (counting upwards), 
+#   interval (indefinite cycling between main time and interval time),
+#   pomodoro (same as above, with fixed main and interval times),
+#   multiple intervals (cycling between main time and interval time, and a break after a defined amount of repetition cycles)
