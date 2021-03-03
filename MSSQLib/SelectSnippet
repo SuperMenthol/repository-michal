@@ -1,3 +1,5 @@
+//constructors omitted in this snippet
+
 public class WhereClause
 {
     public int columnIndex;
