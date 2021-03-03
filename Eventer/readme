@@ -1,0 +1,2 @@
+# Program used to create and manage personal events
+# Utilizes SQLite, as only one table is being used
