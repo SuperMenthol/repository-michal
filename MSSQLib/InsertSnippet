@@ -1,0 +1,106 @@
+//constructors omitted in this snippet
+
+public class Database
+{
+    public void InsertInto(string tableName, List<UpdateParameter> insertValuePairs, bool identityInsert = false)
+    {
+        if (tableName != string.Empty && insertValuePairs.Count > 0) 
+        { 
+            if (!identityInsert) { techMethods.NonQuery(InsertQueryBuilder(tableName, insertValuePairs)); }
+            else { techMethods.NonQuery(InsertQueryWithIdentityBuilder(tableName, insertValuePairs)); }
+        }
+    }
+    
+    private SqlCommand InsertQueryBuilder(string tableName, List<UpdateParameter> insertValuePairs)
+    {
+        SqlCommand insCmd = new SqlCommand();
+
+        var columnIndexList = new List<int>();
+        foreach (var item in insertValuePairs) { columnIndexList.Add(item.columnIndex); }
+        var columnNames = sysTables.GetColumnNames(tableName, columnIndexList);
+        StringBuilder queryBuilder = new StringBuilder();
+
+        int identityColumnIndex = sysTables.GetIdentityIndex(tableName);
+        queryBuilder.Append("INSERT INTO " + techMethods.SanitizeInput(tableName) + "(");
+        for (int i = 0; i < columnNames.Count(); i++)
+        {
+            if (insertValuePairs[i].columnIndex != identityColumnIndex)
+            {
+                queryBuilder.Append(columnNames[i].ItemArray[1]);
+                if (i < columnNames.Count() - 1) { queryBuilder.Append(", "); }
+            }
+        }
+        queryBuilder.Append(") VALUES (");
+        for (int i = 0; i < insertValuePairs.Count(); i++)
+        {
+            if (insertValuePairs[i].columnIndex != identityColumnIndex)
+            {
+                SqlParameter newParam = new SqlParameter("@valparam" + i, insertValuePairs[i].val);
+                insCmd.Parameters.Add(newParam);
+                queryBuilder.Append(newParam.ParameterName);
+                if (i < columnNames.Count() - 1) { queryBuilder.Append(", "); }
+            }
+        }
+        queryBuilder.Append(")");
+        insCmd.Connection = new SqlConnection(ConnectionString);
+        insCmd.CommandText = queryBuilder.ToString();
+
+        return insCmd;
+    }
+}
+
+sealed class SystemTables
+{
+    public List<DataRow> GetColumnNames(string tbName, List<int> columnIndexes)
+    {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.Append("SELECT ORDINAL_POSITION, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'" + tbName + "\'");
+        if (columnIndexes.Count > 0)
+        {
+            queryBuilder.Append(" AND ORDINAL_POSITION IN(");
+            foreach (int el in columnIndexes) { queryBuilder.Append(el + ","); }
+            queryBuilder.Remove(queryBuilder.Length - 1, 1);
+            queryBuilder.Append(")");
+        }
+
+        SqlCommand selCmd = new SqlCommand();
+        selCmd.CommandText = queryBuilder.ToString();
+        selCmd.Connection = new SqlConnection(connString);
+
+        var columnTable = new TechnicalMethods().Select(selCmd).Select().AsEnumerable().ToList();
+        return columnTable;
+    }
+    
+    public int GetIdentityIndex(string tableName)
+    {
+        SqlCommand selCmd = new SqlCommand();
+        selCmd.Connection = new SqlConnection(connString);
+        selCmd.CommandText = "SELECT isc.table_name, sic.[name], sic.column_id FROM sys.identity_columns sic JOIN INFORMATION_SCHEMA.COLUMNS isc ON sic.[name] = isc.COLUMN_NAME" +
+            "WHERE isc.table_name = \'" + tableName + "\'" ;
+
+        var dt = new TechnicalMethods().Select(selCmd).Select().AsEnumerable().ToList();
+        foreach (var item in dt) { if (item[0].ToString() == tableName) { return (int)item[2]; } }
+
+        return 0;
+    }
+}
+
+sealed class TechnicalMethods
+{
+    public string SanitizeInput(string inputString)
+    {
+        List<char> illegalChars = new List<char>() { '!', ';', '.', ',', '"', '=', '>', '<' };
+        foreach (char c in inputString.ToCharArray()) { if (illegalChars.Contains(c)) { inputString.Replace(c, new char()); }; }
+
+        return inputString;
+    }
+    
+    public void NonQuery(SqlCommand sqlQuery)
+    {
+        using (var sqConn = new SqlConnection(sqlQuery.Connection.ConnectionString))
+        {
+            sqlQuery.Connection.Open();
+            sqlQuery.ExecuteNonQuery();
+        }
+    }
+}
