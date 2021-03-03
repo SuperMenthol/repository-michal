@@ -1,0 +1,58 @@
+public class KeyChangeWindow: MonoBehaviour
+{
+    int playerIndex;
+    int keyIndex;
+    
+    void DetectPressedKeyOrButton()
+    {
+        foreach (KeyCode kcode in System.Enum.GetValues(typeof(KeyCode)))
+        {
+            if (Input.GetKeyDown(kcode))
+            {
+                int parsedKeyCode = (int)System.Enum.Parse(typeof(KeyCode), kcode.ToString());
+                if (parsedKeyCode != 27 || parsedKeyCode != 323)
+                {
+                    SwapKeysIfExist(parsedKeyCode);
+                    PlayerPrefs.SetInt("p" + playerIndex + "key" + keyIndex, parsedKeyCode);
+                    mainText.text = kcode.ToString();
+                    callingBt.transform.GetComponentInChildren<TextMeshProUGUI>().text = kcode.ToString();
+                }
+            }
+        }
+    }
+
+    void SwapKeysIfExist(int pressedKey)
+    {
+        bool changed = false;
+        var panelsList = FindObjectsOfType<MainMenu_PlayerPanel>();
+        var currentInt = PlayerPrefs.GetInt("p" + playerIndex + "key" + keyIndex);
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (PlayerPrefs.GetInt("p" + i + "key" + j) == pressedKey && i != playerIndex)
+                {
+                    if (!changed)
+                    {
+                        PlayerPrefs.SetInt("p" + i + "key" + j, currentInt);
+                        Debug.Log("Key " + currentInt + " has been changed for p" + i + "key" + j + ". Player " + playerIndex + " key " + keyIndex + " is now " + pressedKey);
+                        foreach (var item in panelsList)
+                        {
+                            if (item.playerIndex == i) { item.btnPanel.transform.GetChild(j).GetComponentInChildren<TextMeshProUGUI>().text = ((KeyCode)System.Enum.ToObject(typeof(KeyCode), currentInt)).ToString(); }
+                        }
+                        changed = true;
+                    }
+                    else
+                    {
+                        PlayerPrefs.SetInt("p" + i + "key" + j, (int)System.Enum.Parse(typeof(KeyCode),KeyCode.None.ToString()));
+                        foreach (var item in panelsList)
+                        {
+                            if (item.playerIndex == i) { item.btnPanel.transform.GetChild(j).GetComponentInChildren<TextMeshProUGUI>().text = KeyCode.None.ToString(); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
