@@ -1,0 +1,34 @@
+﻿<Window x:Class="Kanban.ProjectMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kanban"
+        mc:Ignorable="d"
+        Title="ProjectMainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid Name="TopGrid" Margin="5,5,5,370">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Name="ProjTitleBox" FontSize="24" FontWeight="Bold">Project name</TextBlock>
+            <TextBlock Margin="0,0,650,30">Filter tasks:</TextBlock>
+            <TextBlock Margin="80,0,550,30" Name="AlertTxt" Visibility="Hidden">No tasks with this parameter</TextBlock>
+            <ComboBox Name="FilterOptionCbx" Margin="0,15,700,0" SelectedIndex="0" SelectionChanged="FilterOptionCbx_SelectionChanged">
+                <ComboBoxItem>No filter</ComboBoxItem>
+                <ComboBoxItem>Task ID</ComboBoxItem>
+                <ComboBoxItem>Task name</ComboBoxItem>
+                <ComboBoxItem>Task type</ComboBoxItem>
+                <ComboBoxItem>Task priority</ComboBoxItem>
+                <ComboBoxItem>Project component</ComboBoxItem>
+                <ComboBoxItem>Assigned to</ComboBoxItem>
+            </ComboBox>
+            <Button Name="FilterBtn" Margin="200,15,500,0" Click="FilterBtn_Click">Filter</Button>
+        </Grid>
+        <Grid Name="MainGrid" Margin="5,50,5,50">
+        </Grid>
+        <Grid Name="BottomGrid" Margin="5,380,5,10">
+            <Button Name="ExitBtn" Margin="700,0,0,0" Click="ExitBtn_Click">Exit</Button>
+            <Button Name="AddBtn" Margin="0,0,700,0" Click="AddBtn_Click">Add task</Button>
+            <Button Name="EditBtn" Margin="100,0,600,0" Click="EditBtn_Click">Edit task</Button>
+            <Button Name="OptionBtn" Margin="600,0,100,0" Click="OptionBtn_Click">Options</Button>
+        </Grid>
+    </Grid>
+</Window>
