@@ -1,0 +1,143 @@
+public class DayNightCycleController : MonoBehaviour
+{
+    [SerializeField] public TextMeshProUGUI timeTxt;
+    int daysSurvived;
+    public int currentTimeInMinutes;
+    public bool nightmode;
+
+    [SerializeField] Light lt;
+
+    [SerializeField] [Range(0, 1400)] public int sunriseTimeInMinutes;
+    [SerializeField] [Range(0, 1400)] public int sunsetTimeInMinutes;
+    float timeFlow = 1f;
+
+    SessionControl msk;
+
+    [SerializeField] GameObject hourArrow;
+    [SerializeField] GameObject minuteArrow;
+
+    //debugging only
+    bool nightStarted;
+    bool dayStarted;
+
+    private void Awake()
+    {
+        currentTimeInMinutes = 1195;
+
+        msk = GetComponent<SessionControl>();
+        daysSurvived = 0;
+    }
+    
+    void Start()
+    {
+        StartCoroutine("PassTime");
+    }
+
+    void Update()
+    {
+        if (currentTimeInMinutes > sunsetTimeInMinutes && !nightmode)
+        {
+            nightmode = true;
+            StartCoroutine("Nightfall");
+        }
+
+        if (currentTimeInMinutes > sunriseTimeInMinutes && currentTimeInMinutes < sunsetTimeInMinutes && nightmode)
+        {
+            nightmode = false;
+            StartCoroutine("Sunrise");
+        }
+
+        if (currentTimeInMinutes > 1439)
+        {
+            msk.daysSurvived++;
+            daysSurvived++;
+            currentTimeInMinutes = 0;
+        }
+    }
+
+    IEnumerator PassTime()
+    {
+        //1 IRL second = 1 in-game minute
+        //24 IRL minutes is 1 full in-game day
+        //time passes 5x faster when the player is asleep
+
+        while (1 == 1)
+        {
+            currentTimeInMinutes++;
+            TimeSpan timeSpan = TimeSpan.FromMinutes(currentTimeInMinutes);
+
+            timeTxt.text = timeSpan.ToString(@"hh\:mm");
+            msk.currentTime = currentTimeInMinutes;
+
+            yield return new WaitForSeconds(timeFlow);
+        }
+    }
+
+    IEnumerator Nightfall()
+    {
+        while (nightmode)
+        {
+            if (currentTimeInMinutes == sunsetTimeInMinutes + 1)
+            {
+                FindObjectOfType<VitalsManager>().ChangeHeatUsage(nightmode); //required in script attached to player that manages vital statistics such as hunger and heat
+            }
+            if (currentTimeInMinutes < sunsetTimeInMinutes + 40)
+            {
+                lt.color -= new Color(0.0025f, 0.0025f, 0f, 0f);
+            }
+            if (currentTimeInMinutes > sunsetTimeInMinutes + 40 && currentTimeInMinutes < sunsetTimeInMinutes + 100)
+            {
+                lt.color -= new Color(0.005f, 0.005f, 0.005f, 0f);
+            }
+            else
+            {
+                lt.color = Color.Lerp(lt.color, Color.black, 0.002f);
+            }
+
+            if (lt.color.r < 0.01f && lt.color.g < 0.01f && lt.color.b < 0.01f && !nightStarted)
+            {
+                nightStarted = true;
+            }
+
+            yield return new WaitForSeconds(timeFlow * 0.25f);
+        }
+    }
+
+    IEnumerator Sunrise()
+    {
+        while (!nightmode)
+        {
+            if (currentTimeInMinutes == 301)
+            {
+                FindObjectOfType<VitalsManager>().ChangeHeatUsage(nightmode);
+            }
+            if (lt.color.r < 1f)
+            {
+                //lt.color += new Color(0.001f, 0.001f, 0.001f, 0f);
+                lt.color = Color.Lerp(lt.color, Color.white, 0.015f);
+            }
+
+            if (lt.color.r > 0.99f && lt.color.g > 0.99f && lt.color.b > 0.99f && !dayStarted)
+            {
+                dayStarted = true;
+                Debug.Log($"Day starting at {currentTimeInMinutes}");
+            }
+
+            yield return new WaitForSeconds(timeFlow * 0.25f);
+        }
+
+        FindObjectOfType<VitalsManager>().ChangeHeatUsage(nightmode);
+    }
+
+    public void ChangeTimeFlow(bool mode)
+    {
+        Debug.Log($"Am I sleeping now? {mode}");
+        timeFlow = mode ? 0.2f : 1f;
+    }
+
+    public string GetDate()
+    {
+        TimeSpan getDateTs = TimeSpan.FromMinutes(currentTimeInMinutes);
+        return "Day " + daysSurvived + ", " + getDateTs.ToString(@"hh\:mm");
+    }
+}
