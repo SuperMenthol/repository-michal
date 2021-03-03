@@ -1,0 +1,87 @@
+public class Database
+{
+		public DataTable Select(SelectParameters select)
+        {
+            if (select.tableName != null)
+            {
+                SqlCommand sqCmd = new SqlCommand();
+                if (select.orderBy > 0) 
+                { 
+                    if (select.whereList.Count > 0) { sqCmd = SelectQueryBuilder(select.tableName, select.selectIndexes, select.whereList, select.orderBy, select.ascendingOrder); }
+                    else { sqCmd = SelectQueryBuilder(select.tableName, select.selectIndexes, select.orderBy, select.ascendingOrder); }
+                }
+                else if (select.orderBy == 0)
+                {
+                    if (select.whereList.Count > 0) { sqCmd = SelectQueryBuilder(select.tableName, select.selectIndexes, select.whereList); }
+                    else { sqCmd = SelectQueryBuilder(select.tableName, select.selectIndexes); }
+                }
+
+                return new TechnicalMethods().Select(sqCmd);
+            }
+            else {  return new DataTable(); }
+        }
+        
+        private SqlCommand SelectQueryBuilder(string tableName, List<int> selectColumnIndexes, List<WhereClause> whereClauses)
+        {
+            SqlCommand selCmd = new SqlCommand();
+            var columnNames = sysTables.GetColumnNames(tableName, selectColumnIndexes);
+            StringBuilder queryBuilder = new StringBuilder();
+            AddSelectColumnsToQuery(queryBuilder, columnNames, tableName);
+
+            selCmd.CommandText = queryBuilder.ToString();
+            selCmd.Connection = new SqlConnection(ConnectionString);
+            if (whereClauses.Count > 0) { selCmd = AddWhereClausesToCommand(selCmd, queryBuilder, columnNames, whereClauses); }
+
+            return selCmd;
+        }
+		
+		        private StringBuilder AddSelectColumnsToQuery(StringBuilder sb, List<DataRow> columnNames, string tableName)
+        {
+            sb.Append("SELECT ");
+            if (columnNames.Count > 0)
+            {
+                for (int i = 0; i < columnNames.Count; i++) { sb.Append(columnNames[i].ItemArray[1] + ","); }
+                sb.Remove(sb.Length - 1, 1);
+            }
+            else { sb.Append("* "); }
+            sb.Append(" FROM " + techMethods.SanitizeInput(tableName));
+
+            return sb;
+        }
+        private SqlCommand AddWhereClausesToCommand(SqlCommand inputCmd, StringBuilder sb, List<DataRow> columnNames, List<WhereClause> selectClauses)
+        {
+            sb.Append(" WHERE ");
+            for (int i = 0; i < selectClauses.Count; i++)
+            {
+                SqlParameter newParam = new SqlParameter("@param" + i.ToString(), selectClauses[i].val);
+                inputCmd.Parameters.Add(newParam);
+                sb = AddWhereClause(sb, columnNames.Where(x => (int)x[0] == selectClauses[i].columnIndex).Select(x => x[1]).FirstOrDefault().ToString(), selectClauses[i].whereOperator, newParam.ParameterName);
+                if (i < selectClauses.Count - 1) { sb.Append(" AND "); }
+            }
+
+            inputCmd.CommandText = sb.ToString();
+            return inputCmd;
+        }
+}
+
+sealed class TechnicalMethods
+{
+	    public DataTable Select(SqlCommand sqlQuery)
+        {
+            using (var sqConn = new SqlConnection(sqlQuery.Connection.ConnectionString))
+            {
+                try
+                {
+                    sqlQuery.Connection.Open();
+                    var nAdapter = new SqlDataAdapter();
+                    var nTable = new DataTable();
+                    nAdapter.SelectCommand = sqlQuery;
+                    nAdapter.Fill(nTable);
+
+                    return nTable;
+                }
+                catch { return new DataTable(); }
+            }
+        }
+}
+		
