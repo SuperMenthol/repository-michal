@@ -1,3 +1,7 @@
+//script checks for existing rope fields next to the one that has been marked by player (clicked)
+//it assigns the sprite from collection based on how many neighbors are next to it, and recursively changes the sprite of those neighbors
+//video: https://www.youtube.com/watch?v=3r7u0og2q14
+
 public class ResourceTilesAssign : MonoBehaviour
 {
     List<Vector3Int> ropeTilePositions;
