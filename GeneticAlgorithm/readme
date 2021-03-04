@@ -1,1 +1,2 @@
-Quick genetic algorithm. It is based on evaluating results of agents on the scene, and gradually increasing the share of "fittest" genes to make units (agents) survive longer on the scene.
+Quick genetic algorithm. It is based on evaluating results of agents on the scene, 
+and gradually increasing the share of "fittest" genes to make units (agents) survive longer on the scene.
