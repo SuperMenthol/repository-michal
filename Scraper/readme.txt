@@ -6,3 +6,4 @@ Notes:
 
 To-do:
 -lose out physical HTML file and use a stream instead (it is disposed along the loop and can't find the exact moment)
+-scrape websites (not only search engines)
